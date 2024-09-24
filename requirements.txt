@@ -1,0 +1,17 @@
+openai
+scikit-learn
+
+langgraph
+langchain
+langchain_openai
+langchain-text-splitters
+langchain-community
+
+python-dotenv
+pydantic
+
+typing-extensions
+
+neo4j
+pandas
+fastapi
