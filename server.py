@@ -12,7 +12,7 @@ import json
 from main_graph import graph
 # ----------------------------------------
 
-origins = [getenv("FRONTEND_URL"), "http://localhost:8501"]
+origins = [getenv("FRONTEND_URL"), "http://localhost:8501", "https://bph.koyeb.app"]
 
 app = FastAPI()
 
