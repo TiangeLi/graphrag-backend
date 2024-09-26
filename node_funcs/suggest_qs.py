@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 from helpers.constants import SUGGESTERLLM
 
-from typing_extensions import TypedDict, Annotated
+from typing_extensions import TypedDict
 
 class SuggestedQuestions(TypedDict):
     questions: list[str]
@@ -9,15 +9,13 @@ class SuggestedQuestions(TypedDict):
 # ------------------------------------- #
 
 suggestions_template = \
-"""If you were in my situation, what else would you want to know?
+"""Write 3 follow-up questions the user can ask, based on the conversation so far.
 
-Write 3 questions that you would want to ask if you were in my situation, in order of priority, to further understand the topic.
-In general:
-the first question should be about the most recommended treatment for my query / priorities,
-the second question should be about another treatment in a similar fashion,
-the third question should be about comparing and contrasting a topic group, such as treatments, side effects, or considerations, etc.
-
-Keep the questions short and to the point."""
+The questions should be:
+- Contextual to the user's overall goal and the information we have provided so far.
+- Short and to the point.
+- Not repetitive.
+- Each question should be different. Focus each question on a specific treatment for BPH; pick the one that would be most relevant based on the conversation so far."""
 
 # ------------------------------------- #
 

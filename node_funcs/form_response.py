@@ -4,7 +4,9 @@ from helpers.constants import CONVLLM
 # ------------------------------------- #
 
 considerations_template = \
-"""Given the user's query, our database search returned the following list of treatment considerations:
+"""Minimize use of jargon and specialized terms.
+
+Given the user's query, our database search returned the following list of treatment considerations:
 
 <considerations>
 {formatted_considerations}
@@ -36,7 +38,9 @@ Just FYI, here are the specific treatments the user asked about:
 # --- #
 
 treatments_template = \
-"""Given the user's query, our database search returned the following list of treatments:
+"""Minimize use of jargon and specialized terms.
+
+Given the user's query, our database search returned the following list of treatments:
 
 <specific_treatments>
 {specific_treatments}

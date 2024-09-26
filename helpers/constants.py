@@ -20,7 +20,7 @@ TRAV_TRAVERSALLLM = ChatOpenAI(model=SMALL_MODEL, temperature=0)
 TRAV_PICKERLLM = ChatOpenAI(model=BIG_MODEL, temperature=0.3)
 
 # PLANNER
-PLANNERLLM = ChatOpenAI(model=SMALL_MODEL, temperature=0)
+PLANNERLLM = ChatOpenAI(model=BIG_MODEL, temperature=0.3)
 
 # SUGGEST QUESTIONS
 SUGGESTERLLM = ChatOpenAI(model=SMALL_MODEL, temperature=0.7)

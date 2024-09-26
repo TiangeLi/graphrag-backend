@@ -31,6 +31,8 @@ class MainState(TypedDict):
     final_response: str
     suggested_qs: list[str]
 
+    scratchpad: str
+
 class MainGraph(object):
     def __init__(self):
         self.db_retriever = DBRetriever()
@@ -42,7 +44,7 @@ class MainGraph(object):
         if specific_treatments:
             specific_treatments = [tx.upper() for tx in specific_treatments]
         raw_considerations = response.get("treatment_considerations", [])
-        return {"specific_treatments": specific_treatments, "raw_considerations": raw_considerations}
+        return {"specific_treatments": specific_treatments, "raw_considerations": raw_considerations, "scratchpad": response}
     
     async def planner_edge(self, state: MainState):
         paths = []
@@ -98,6 +100,9 @@ class MainGraph(object):
                     formatted_considerations[name] = {}
                     for category, treatments in sorted_treatments.items():
                         formatted_considerations[name][category] = _iter_tree(treatments, [])
+
+        if not formatted_considerations:
+            return {"formatted_considerations": ""}
 
         clustered = await a_cluster_strings([name for name in formatted_considerations.keys()])
         clustered_formatted_considerations = {}
