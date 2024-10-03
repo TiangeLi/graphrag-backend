@@ -36,6 +36,7 @@ all_guidelines_app.add_middleware(
 
 @bph_app.post("/chat")
 async def chat(input: dict):
+    print("BPH: ", input)
     try:
         input = input.get("messages", [])[-1]['content'][0]['text']
     except IndexError as e:
@@ -45,6 +46,7 @@ async def chat(input: dict):
 
 @all_guidelines_app.post("/chat")
 async def chat(input: dict):
+    print("CUA: ", input)
     last_response = ""
     try:
         input = input.get("messages", [])
