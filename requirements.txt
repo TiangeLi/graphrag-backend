@@ -1,9 +1,11 @@
 openai
 scikit-learn
+pandas
 
 langgraph
 langchain
 langchain_openai
+langchain-cohere
 langchain-text-splitters
 langchain-community
 
@@ -13,7 +15,9 @@ pydantic
 typing-extensions
 
 neo4j
-pandas
-fastapi
+faiss-cpu
 
+fastapi
 uvicorn
+
+setuptools
