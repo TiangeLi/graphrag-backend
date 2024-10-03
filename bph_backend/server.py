@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 load_dotenv(override=True)
-import os
 
 from langchain_core.messages import HumanMessage, AIMessage
 
@@ -12,29 +11,23 @@ import json
 from .main_graph import graph
 # ----------------------------------------
 
-origins = os.getenv('FRONTEND_URLS').split(',')
-
-def process_origins(origins):
-    processed = []
-    for origin in origins:
-        if origin.startswith('http://') or origin.startswith('https://'):
-            # Split the origin into protocol and domain
-            protocol, domain = origin.split('://', 1)
-            # Replace the first subdomain with a wildcard
-            wildcard_domain = f"{protocol}://*.{'.'.join(domain.split('.')[1:])}"
-            processed.append(wildcard_domain)
-        else:
-            processed.append(origin)
-    return processed
+origins = [
+    "http://localhost:8501", 
+    "http://localhost:3000",
+    "https://tli.koyeb.app/"
+    "https://tli.koyeb.app/chat?server=bph",
+    "https://tli.koyeb.app/chat?server=all_guidelines"
+    ]
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=process_origins(origins),
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    
 )
 
 def convert_to_langchain_messages(messages):

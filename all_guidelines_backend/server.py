@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 load_dotenv(override=True)
-import os
 
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
@@ -10,7 +9,13 @@ from .main_graph import graph
 import json
 # ----------------------------------------
 
-origins = os.getenv('FRONTEND_URLS').split(',')
+origins = [
+    "http://localhost:8501", 
+    "http://localhost:3000",
+    "https://tli.koyeb.app/"
+    "https://tli.koyeb.app/chat?server=bph",
+    "https://tli.koyeb.app/chat?server=all_guidelines"
+    ]
 
 app = FastAPI()
 
@@ -20,8 +25,8 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    
 )
-
 async def run_graph(input):
     async for event in graph.astream_events({"messages": input}, version="v2"):
         kind = event["event"]
