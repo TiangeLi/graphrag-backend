@@ -1,8 +1,64 @@
 import uvicorn
 import asyncio
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
-from bph_backend.server import app as bph_app
-from all_guidelines_backend.server import app as all_guidelines_app
+from bph_backend.server import run_graph as run_graph_bph
+from all_guidelines_backend.server import run_graph as run_graph_all_guidelines
+
+origins = [
+    "http://localhost:8501", 
+    "http://localhost:3000",
+    "https://tli.koyeb.app",
+]
+
+bph_app = FastAPI()
+all_guidelines_app = FastAPI()
+
+bph_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
+
+all_guidelines_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"]
+)
+
+@bph_app.post("/chat")
+async def chat(input: dict):
+    try:
+        input = input.get("messages", [])[-1]['content'][0]['text']
+    except IndexError as e:
+        input = input
+    return StreamingResponse(run_graph_bph(input))
+
+
+@all_guidelines_app.post("/chat")
+async def chat(input: dict):
+    last_response = ""
+    try:
+        input = input.get("messages", [])
+        query = input[-1]['content'][0]['text']
+        if len(input) > 1:
+            last_response = input[-2]['content'][0]['text']
+    except IndexError as e:
+        query = input
+    payload = [
+        {"role": "ai", "content": last_response},
+        {"role": "human", "content": query}
+    ]
+    return StreamingResponse(run_graph_all_guidelines(payload))
+
 
 async def run_servers():
     config_bph = uvicorn.Config(bph_app, host="0.0.0.0", port=8000)

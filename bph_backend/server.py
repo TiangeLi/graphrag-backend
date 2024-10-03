@@ -11,26 +11,6 @@ import json
 from .main_graph import graph
 # ----------------------------------------
 
-origins = [
-    "http://localhost:8501", 
-    "http://localhost:3000",
-    "https://tli.koyeb.app"
-    "https://tli.koyeb.app/chat?server=bph",
-    "https://tli.koyeb.app/chat?server=all_guidelines",
-    "https://tli.koyeb.app/chat",
-    ]
-
-app = FastAPI()
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["*"]
-)
-
 def convert_to_langchain_messages(messages):
     langchain_messages = []
     for message in messages:
@@ -107,14 +87,3 @@ async def run_graph(input: dict):
                     "args": event["data"].get("input"),
                     "result": event["data"].get("output").content,
                 })
-
-@app.post("/chat")
-async def chat(input: dict):
-    try:
-        input = input.get("messages", [])[-1]['content'][0]['text']
-    except IndexError as e:
-        input = input
-    return StreamingResponse(run_graph(input))
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
