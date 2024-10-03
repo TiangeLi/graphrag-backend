@@ -12,9 +12,10 @@ import json
 origins = [
     "http://localhost:8501", 
     "http://localhost:3000",
-    "https://tli.koyeb.app/"
+    "https://tli.koyeb.app"
     "https://tli.koyeb.app/chat?server=bph",
-    "https://tli.koyeb.app/chat?server=all_guidelines"
+    "https://tli.koyeb.app/chat?server=all_guidelines",
+    "https://tli.koyeb.app/chat",
     ]
 
 app = FastAPI()
