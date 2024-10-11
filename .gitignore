@@ -1,3 +1,7 @@
 .env
 playground.py
 playground.ipynb
+_eval_maker.ipynb
+cua_qs.csv
+cua_qs.xlsx
+/eval_results
