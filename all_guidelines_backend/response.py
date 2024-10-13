@@ -15,9 +15,13 @@ Follow these instructions:
 {context}
 </context>"""
 
+
+
+prompt_hint = """ Think carefully before you answer, making sure your answer is complete and does not miss any important and relevant considerations."""
+
 prompt = ChatPromptTemplate.from_messages([
     ("system", template),
-    ("human", "{query}"),
+    ("human", "{query}" + prompt_hint),
 ])
 
 #prompt = ChatPromptTemplate([
