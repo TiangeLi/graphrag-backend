@@ -55,43 +55,33 @@ pickle_directory = "aua"
 class MainGraph(object):
     def __init__(self):
         current_dir = Path(__file__).resolve().parent
-        #vector_db = FAISS.load_local(current_dir / "docs_vector", 
-        #                               OpenAIEmbeddings(model=LARGE_EMBD), 
-        #                               allow_dangerous_deserialization=True)
-        #vector_retriever = vector_db.as_retriever(search_kwargs={"k": 50})
 
-
-       # with open(f'{current_dir}/{pickle_directory}/doc_ids.pkl', 'rb') as file:
-       #     doc_ids = pickle.load(file)
-       # with open(f'{current_dir}/{pickle_directory}/summary_docs.pkl', 'rb') as file:
-       #     summary_docs = pickle.load(file)
+        with open(f'{current_dir}/{pickle_directory}/doc_ids.pkl', 'rb') as file:
+            doc_ids = pickle.load(file)
+        with open(f'{current_dir}/{pickle_directory}/summary_docs.pkl', 'rb') as file:
+            summary_docs = pickle.load(file)
         with open(f'{current_dir}/{pickle_directory}/docs.pkl', 'rb') as file:
             docs = pickle.load(file)
 
-        retriever = FAISS.from_documents(docs, OpenAIEmbeddings(model=LARGE_EMBD))
-
-        retriever = retriever.as_retriever(search_kwargs={"k": 20})
-
-        if False:
-            vectorstore = FAISS.from_documents(summary_docs, OpenAIEmbeddings(model=LARGE_EMBD))
-            store = InMemoryByteStore()
-            id_key = 'doc_id'
-            retriever = MultiVectorRetriever(
-                vectorstore=vectorstore,
-                byte_store=store,
-                id_key=id_key,
-                search_type=SearchType.similarity,
-                search_kwargs={'k': 20}
-            )
-            retriever.docstore.mset(list(zip(doc_ids, docs)))
+        vectorstore = FAISS.from_documents(summary_docs, OpenAIEmbeddings(model=LARGE_EMBD))
+        store = InMemoryByteStore()
+        id_key = 'doc_id'
+        retriever = MultiVectorRetriever(
+            vectorstore=vectorstore,
+            byte_store=store,
+            id_key=id_key,
+            search_type=SearchType.similarity,
+            search_kwargs={'k': 20}
+        )
+        retriever.docstore.mset(list(zip(doc_ids, docs)))
 
         self.big_retriever = ContextualCompressionRetriever(
-            base_compressor=CohereRerank(model="rerank-v3.5", top_n=10), 
+            base_compressor=CohereRerank(model="rerank-v3.5", top_n=7), 
             base_retriever=retriever
         )
 
         self.small_retriever = ContextualCompressionRetriever(
-            base_compressor=CohereRerank(model="rerank-v3.5", top_n=4), 
+            base_compressor=CohereRerank(model="rerank-v3.5", top_n=3), 
             base_retriever=retriever
         )
 
@@ -140,7 +130,7 @@ class MainGraph(object):
 
         if treatments_to_discuss == []:
             refined_context = await self.big_retriever.ainvoke(prompt)
-            context_hint = ""
+            context_hint = "Please use patient friendly, non-technical language in your response."
         else:
             refined_context = await self.big_retriever.ainvoke(prompt)
             extra_context = await self.small_retriever.abatch(treatments_to_discuss)
@@ -148,7 +138,7 @@ class MainGraph(object):
             for context_list in [refined_context]+extra_context:
                 flattened_context.extend(context_list)
             refined_context = flattened_context
-            context_hint = f"You should include a discussion of the following in your response, given their particular relevance to the user's current query: {', '.join(treatments_to_discuss)}"
+            context_hint = f"Please use patient friendly, non-technical language in your response.\n\nYou should include a discussion of the following in your response, given their particular relevance to the user's current query: {', '.join(treatments_to_discuss)}"
 
         formatted_context = "\n\n".join([c.page_content for c in refined_context])
         response = await response_chain.ainvoke({"query": prompt, "context": formatted_context, "context_hint": context_hint})
