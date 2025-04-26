@@ -6,10 +6,8 @@ from langchain_openai import ChatOpenAI
 LARGE_EMBD = 'text-embedding-3-large'
 SMALL_EMBD = 'text-embedding-3-small'
 
-BIG_MODEL = 'gpt-4o-2024-08-06'
-SMALL_MODEL = 'gpt-4o-mini-2024-07-18'
-
-EXPERIMENTAL_LATEST_CHAT_MODEL = 'chatgpt-4o-latest'
+BIG_MODEL = 'gpt-4.1'
+SMALL_MODEL = 'gpt-4.1-nano'
 
 # MAIN
 CONVLLM = ChatOpenAI(model=BIG_MODEL, temperature=0.5, streaming=True)
