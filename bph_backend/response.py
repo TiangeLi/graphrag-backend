@@ -30,8 +30,11 @@ Do not use any markdown tables in your response - the formatting currently does 
 </REMEMBER>
 
 
-KEEP YOUR RESPONSE CONCISE, TO THE POINT, AND EASY TO UNDERSTAND.
-FOCUS ON ANSWERING THE QUERY, NOT INFO DUMPING."""
+<rules>
+- KEEP YOUR RESPONSE CONCISE, TO THE POINT, AND EASY TO UNDERSTAND. FOCUS ON ANSWERING THE QUERY, NOT INFO DUMPING.
+- Use patient friendly, non-technical language in your response.
+- If you are discussing multiple treatments, focus on the a discussion on what considerations the patient should take into account when choosing a treatment (e.g. efficacy, side effects, prostate size, patient values and characteristics, etc.)
+</rules>"""
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", template),
