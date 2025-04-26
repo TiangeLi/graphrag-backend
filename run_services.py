@@ -34,15 +34,32 @@ all_guidelines_app.add_middleware(
     expose_headers=["*"]
 )
 
-@bph_app.post("/chat")
+"""@bph_app.post("/chat")
 async def chat(input: dict):
     print("BPH: ", input)
     try:
         input = input.get("messages", [])[-1]['content'][0]['text']
     except IndexError as e:
         input = input
-    return StreamingResponse(run_graph_bph(input))
+    return StreamingResponse(run_graph_bph(input))"""
 
+
+@bph_app.post("/chat")
+async def chat(input: dict):
+    print("BPH: ", input)
+    last_response = ""
+    try:
+        input = input.get("messages", [])
+        query = input[-1]['content'][0]['text']
+        if len(input) > 1:
+            last_response = input[-2]['content'][0]['text']
+    except IndexError as e:
+        query = input
+    payload = [
+        {"role": "ai", "content": last_response},
+        {"role": "human", "content": query}
+    ]
+    return StreamingResponse(run_graph_bph(payload))
 
 @all_guidelines_app.post("/chat")
 async def chat(input: dict):
