@@ -61,24 +61,29 @@ class MainGraph(object):
         #vector_retriever = vector_db.as_retriever(search_kwargs={"k": 50})
 
 
-        with open(f'{current_dir}/{pickle_directory}/doc_ids.pkl', 'rb') as file:
-            doc_ids = pickle.load(file)
-        with open(f'{current_dir}/{pickle_directory}/summary_docs.pkl', 'rb') as file:
-            summary_docs = pickle.load(file)
+       # with open(f'{current_dir}/{pickle_directory}/doc_ids.pkl', 'rb') as file:
+       #     doc_ids = pickle.load(file)
+       # with open(f'{current_dir}/{pickle_directory}/summary_docs.pkl', 'rb') as file:
+       #     summary_docs = pickle.load(file)
         with open(f'{current_dir}/{pickle_directory}/docs.pkl', 'rb') as file:
             docs = pickle.load(file)
 
-        vectorstore = FAISS.from_documents(summary_docs, OpenAIEmbeddings(model=LARGE_EMBD))
-        store = InMemoryByteStore()
-        id_key = 'doc_id'
-        retriever = MultiVectorRetriever(
-            vectorstore=vectorstore,
-            byte_store=store,
-            id_key=id_key,
-            search_type=SearchType.similarity,
-            search_kwargs={'k': 20}
-        )
-        retriever.docstore.mset(list(zip(doc_ids, docs)))
+        retriever = FAISS.from_documents(docs, OpenAIEmbeddings(model=LARGE_EMBD))
+
+        retriever = retriever.as_retriever(search_kwargs={"k": 20})
+
+        if False:
+            vectorstore = FAISS.from_documents(summary_docs, OpenAIEmbeddings(model=LARGE_EMBD))
+            store = InMemoryByteStore()
+            id_key = 'doc_id'
+            retriever = MultiVectorRetriever(
+                vectorstore=vectorstore,
+                byte_store=store,
+                id_key=id_key,
+                search_type=SearchType.similarity,
+                search_kwargs={'k': 20}
+            )
+            retriever.docstore.mset(list(zip(doc_ids, docs)))
 
         self.big_retriever = ContextualCompressionRetriever(
             base_compressor=CohereRerank(model="rerank-v3.5", top_n=10), 
